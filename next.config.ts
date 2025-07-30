@@ -9,10 +9,8 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   
-  // Configure API timeout for summarization requests
-  experimental: {
-    serverComponentsExternalPackages: ['cheerio'],
-  },
+  // Configure external packages for server components
+  serverExternalPackages: ['cheerio'],
 };
 
 export default nextConfig;

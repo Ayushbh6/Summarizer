@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -19,7 +19,7 @@ interface ScrapingResult {
   pagesScrapped: number;
 }
 
-export default function BatchResultsPage() {
+function BatchResultsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -417,5 +417,24 @@ export default function BatchResultsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function BatchResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-200 font-sans p-6 flex items-center justify-center">
+        <div className="neumorphic-card p-8 rounded-3xl">
+          <div className="text-center">
+            <div className="neumorphic-small w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="animate-spin w-8 h-8 border-2 border-gray-400 border-t-blue-500 rounded-full"></div>
+            </div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <BatchResultsPageContent />
+    </Suspense>
   );
 }
