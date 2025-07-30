@@ -1,26 +1,151 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #e0e0e0;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Neumorphic Styles */
+.neumorphic-card {
+  background: #e0e0e0;
+  box-shadow: 
+    20px 20px 60px #bebebe,
+    -20px -20px 60px #ffffff;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.neumorphic-card:hover {
+  box-shadow: 
+    25px 25px 70px #bebebe,
+    -25px -25px 70px #ffffff;
+}
+
+.neumorphic-button {
+  background: #e0e0e0;
+  box-shadow: 
+    8px 8px 16px #bebebe,
+    -8px -8px 16px #ffffff;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.neumorphic-button:hover {
+  box-shadow: 
+    12px 12px 20px #bebebe,
+    -12px -12px 20px #ffffff;
+  transform: translateY(-2px);
+}
+
+.neumorphic-button:active {
+  box-shadow: 
+    inset 4px 4px 8px #bebebe,
+    inset -4px -4px 8px #ffffff;
+  transform: translateY(0);
+}
+
+.neumorphic-pressed {
+  box-shadow: 
+    inset 15px 15px 30px #bebebe,
+    inset -15px -15px 30px #ffffff;
+}
+
+.neumorphic-inset {
+  background: #e0e0e0;
+  box-shadow: 
+    inset 15px 15px 30px #bebebe,
+    inset -15px -15px 30px #ffffff;
+  border: none;
+}
+
+.neumorphic-small {
+  background: #e0e0e0;
+  box-shadow: 
+    5px 5px 10px #bebebe,
+    -5px -5px 10px #ffffff;
+  border: none;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  box-shadow: inset 2px 2px 4px #bebebe, inset -2px -2px 4px #ffffff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  box-shadow: 2px 2px 4px #bebebe, -2px -2px 4px #ffffff;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  box-shadow: 3px 3px 6px #bebebe, -3px -3px 6px #ffffff;
+}
+
+/* Custom markdown styling for better press release formatting */
+.press-release-content {
+  line-height: 1.7;
+}
+
+.press-release-content h1 {
+  color: #2d3748;
+  border-bottom: 2px solid #cbd5e0;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.press-release-content h2 {
+  color: #2d3748;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.press-release-content h3 {
+  color: #4a5568;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.press-release-content ul {
+  margin-left: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.press-release-content li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.press-release-content strong {
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.press-release-content p {
+  margin-bottom: 1rem;
+  color: #4a5568;
+}
+
+/* Enhanced bullet points */
+.press-release-content ul li::marker {
+  color: #718096;
+}
+
+/* Section dividers */
+.section-divider {
+  border-top: 1px solid #e2e8f0;
+  margin: 2rem 0;
+  padding-top: 1rem;
 }
