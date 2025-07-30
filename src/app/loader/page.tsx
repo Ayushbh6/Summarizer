@@ -41,7 +41,7 @@ export default function LoaderPage() {
               Choose Your Method
             </h1>
             <p className="text-gray-600 mt-2">
-              Select how you'd like to process press releases
+              Select how you&apos;d like to process press releases
             </p>
           </div>
         </header>
@@ -95,7 +95,7 @@ export default function LoaderPage() {
               <h2 className="text-2xl font-bold text-gray-800">Base URL with Year Range</h2>
             </div>
             <p className="text-gray-600 mb-6">
-              Extract all press releases from a company's news page within a specific year range
+              Extract all press releases from a company&apos;s news page within a specific year range
             </p>
             
             {selectedOption === 'range' && (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -35,17 +35,7 @@ export default function BatchResultsPage() {
   const startYear = searchParams.get('startYear');
   const endYear = searchParams.get('endYear');
 
-  useEffect(() => {
-    if (!baseUrl || !startYear || !endYear) {
-      setError('Missing required parameters');
-      setIsLoading(false);
-      return;
-    }
-
-    startBaseScraping();
-  }, [baseUrl, startYear, endYear]);
-
-  const startBaseScraping = async () => {
+  const startBaseScraping = useCallback(async () => {
     try {
       setIsLoading(true);
       setError('');
@@ -71,12 +61,23 @@ export default function BatchResultsPage() {
       setScrapingResult(result);
       setIsLoading(false);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Base scraping error:', error);
-      setError(error.message || 'An error occurred while scraping');
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while scraping';
+      setError(errorMessage);
       setIsLoading(false);
     }
-  };
+  }, [baseUrl, startYear, endYear]);
+
+  useEffect(() => {
+    if (!baseUrl || !startYear || !endYear) {
+      setError('Missing required parameters');
+      setIsLoading(false);
+      return;
+    }
+
+    startBaseScraping();
+  }, [baseUrl, startYear, endYear, startBaseScraping]);
 
   const handleReleaseToggle = (url: string) => {
     setSelectedReleases(prev => {

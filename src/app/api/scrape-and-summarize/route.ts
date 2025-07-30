@@ -145,7 +145,7 @@ ${content}`;
                     if (content) {
                       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
                     }
-                  } catch (e) {
+                  } catch {
                     // Ignore invalid JSON
                   }
                 }

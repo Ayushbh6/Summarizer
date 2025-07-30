@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -16,23 +16,7 @@ export default function ResultsPage() {
 
   const url = searchParams.get('url');
 
-  useEffect(() => {
-    if (!url) {
-      setError('No URL provided');
-      setIsLoading(false);
-      return;
-    }
-
-    startSummarization();
-
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, [url]);
-
-  const startSummarization = async () => {
+  const startSummarization = useCallback(async () => {
     try {
       setIsLoading(true);
       setError('');
@@ -94,21 +78,38 @@ export default function ResultsPage() {
               if (parsed.content) {
                 setSummary(prev => prev + parsed.content);
               }
-            } catch (e) {
+            } catch {
               // Ignore invalid JSON
             }
           }
         }
       }
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
         return; // User cancelled
       }
       console.error('Summarization error:', error);
-      setError(error.message || 'An error occurred while processing');
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while processing';
+      setError(errorMessage);
       setIsLoading(false);
     }
-  };
+  }, [url]);
+
+  useEffect(() => {
+    if (!url) {
+      setError('No URL provided');
+      setIsLoading(false);
+      return;
+    }
+
+    startSummarization();
+
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [url, startSummarization]);
 
   const handleDownloadDocx = async () => {
     try {
