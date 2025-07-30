@@ -106,6 +106,26 @@ Each generated summary includes:
 
 ## 🚀 Deployment
 
+### Deploy to Railway (Recommended)
+
+Railway offers excellent Next.js support with zero-config deployment:
+
+1. **Connect Repository**
+   - Go to [Railway Dashboard](https://railway.app/dashboard)
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Select your `Summarizer` repository
+
+2. **Configure Environment Variables**
+   ```bash
+   OPENROUTER_API_KEY=your_openrouter_api_key_here
+   ```
+
+3. **Deploy**
+   - Railway automatically detects Next.js and deploys
+   - Get your live URL in minutes!
+
+📖 **Detailed Railway deployment guide**: See [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)
+
 ### Deploy to Vercel
 
 1. **Push to GitHub** (if not already done)

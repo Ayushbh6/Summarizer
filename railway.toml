@@ -1,0 +1,13 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+# Railway will automatically use 'npm start' or 'yarn start' from package.json
+startCommand = "npm start"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+
+# Environment-specific configurations
+[environments.production]
+variables = { NODE_ENV = "production" }
