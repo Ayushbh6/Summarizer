@@ -10,7 +10,7 @@ interface PressRelease {
 
 export async function POST(request: NextRequest) {
   try {
-    const { baseUrl, startYear, endYear } = await request.json();
+    const { baseUrl, startYear, endYear, startMonth, endMonth } = await request.json();
 
     if (!baseUrl || !startYear || !endYear) {
       return NextResponse.json({ 
@@ -20,6 +20,8 @@ export async function POST(request: NextRequest) {
 
     const startYearNum = parseInt(startYear);
     const endYearNum = parseInt(endYear);
+    const startMonthNum = startMonth ? parseInt(startMonth) : null;
+    const endMonthNum = endMonth ? parseInt(endMonth) : null;
     
     if (startYearNum > endYearNum) {
       return NextResponse.json({ 
@@ -27,7 +29,24 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`Scraping base URL: ${baseUrl} for years ${startYearNum}-${endYearNum}`);
+    // Validate month parameters if provided
+    if (startMonthNum && (startMonthNum < 1 || startMonthNum > 12)) {
+      return NextResponse.json({ 
+        error: 'Start month must be between 1 and 12' 
+      }, { status: 400 });
+    }
+
+    if (endMonthNum && (endMonthNum < 1 || endMonthNum > 12)) {
+      return NextResponse.json({ 
+        error: 'End month must be between 1 and 12' 
+      }, { status: 400 });
+    }
+
+    const dateRangeDescription = startMonthNum && endMonthNum 
+      ? `${startYearNum}/${startMonthNum}-${endYearNum}/${endMonthNum}`
+      : `${startYearNum}-${endYearNum}`;
+
+    console.log(`Scraping base URL: ${baseUrl} for date range ${dateRangeDescription}`);
 
     const allPressReleases: PressRelease[] = [];
     const yearRange = endYearNum - startYearNum + 1;
@@ -59,6 +78,39 @@ export async function POST(request: NextRequest) {
         console.warn('Date parsing error:', error);
         return null;
       }
+    };
+
+    // Function to check if a date falls within the specified range
+    const isDateInRange = (date: Date, startY: number, endY: number, startM?: number | null, endM?: number | null): boolean => {
+      const year = date.getFullYear();
+
+      // If no month constraints at all, use year-only logic
+      if (!startM && !endM) {
+        return year >= startY && year <= endY;
+      }
+
+      // Handle partial or full month constraints
+      let startDate: Date;
+      let endDate: Date;
+
+      if (startM && endM) {
+        // Both months provided - precise range
+        startDate = new Date(startY, startM - 1, 1); // First day of start month
+        endDate = new Date(endY, endM, 0); // Last day of end month
+      } else if (startM && !endM) {
+        // Only start month provided - from start month to end of end year
+        startDate = new Date(startY, startM - 1, 1); // First day of start month
+        endDate = new Date(endY, 11, 31); // Last day of end year (December 31)
+      } else if (!startM && endM) {
+        // Only end month provided - from start of start year to end month
+        startDate = new Date(startY, 0, 1); // First day of start year (January 1)
+        endDate = new Date(endY, endM, 0); // Last day of end month
+      } else {
+        // Fallback (should not reach here due to first check)
+        return year >= startY && year <= endY;
+      }
+
+      return date >= startDate && date <= endDate;
     };
 
     // Function to scrape a single page
@@ -202,19 +254,20 @@ export async function POST(request: NextRequest) {
         
         console.log(`Page ${currentPage}: Found ${pressReleases.length} press releases`);
         
-        // Filter releases within year range and check stopping condition
+        // Filter releases within date range and check stopping condition
         for (const release of pressReleases) {
-          const releaseYear = release.parsedDate.getFullYear();
+          const releaseDate = release.parsedDate;
+          const releaseYear = releaseDate.getFullYear();
           
-          // If we found a release from before our start year, stop scraping
+          // For stopping condition, use year-only logic (more conservative)
           if (releaseYear < stopBeforeYear) {
             console.log(`Found release from ${releaseYear}, stopping scrape (before ${stopBeforeYear})`);
             shouldContinue = false;
             break;
           }
           
-          // Add release if it's within our target range
-          if (releaseYear >= startYearNum && releaseYear <= endYearNum) {
+          // Check if release is within our target date range
+          if (isDateInRange(releaseDate, startYearNum, endYearNum, startMonthNum, endMonthNum)) {
             allPressReleases.push(release);
           }
         }
@@ -255,6 +308,7 @@ export async function POST(request: NextRequest) {
       })),
       totalFound: uniqueReleases.length,
       yearRange: `${startYearNum}-${endYearNum}`,
+      dateRange: dateRangeDescription,
       pagesScrapped: currentPage - 1
     });
 

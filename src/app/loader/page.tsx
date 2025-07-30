@@ -10,6 +10,8 @@ export default function LoaderPage() {
   const [baseUrl, setBaseUrl] = useState('');
   const [startYear, setStartYear] = useState('');
   const [endYear, setEndYear] = useState('');
+  const [startMonth, setStartMonth] = useState('');
+  const [endMonth, setEndMonth] = useState('');
 
   const handleBack = () => {
     router.push('/');
@@ -20,8 +22,18 @@ export default function LoaderPage() {
       // Navigate to results page with the URL
       router.push(`/results?url=${encodeURIComponent(url)}`);
     } else if (selectedOption === 'range' && baseUrl && startYear && endYear) {
-      // Navigate to batch results page with base URL and year range
-      router.push(`/batch-results?baseUrl=${encodeURIComponent(baseUrl)}&startYear=${startYear}&endYear=${endYear}`);
+      // Build URL with optional month parameters
+      const params = new URLSearchParams({
+        baseUrl,
+        startYear,
+        endYear
+      });
+      
+      if (startMonth) params.append('startMonth', startMonth);
+      if (endMonth) params.append('endMonth', endMonth);
+      
+      // Navigate to batch results page with base URL and date range
+      router.push(`/batch-results?${params.toString()}`);
     }
   };
 
@@ -143,6 +155,58 @@ export default function LoaderPage() {
                         max={new Date().getFullYear()}
                         className="w-full p-4 rounded-xl bg-gray-200 border-none outline-none text-gray-700 neumorphic-inset"
                       />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-3">
+                        Start Month <span className="text-sm text-gray-500">(Optional - defaults to current month)</span>
+                      </label>
+                      <select
+                        value={startMonth}
+                        onChange={(e) => setStartMonth(e.target.value)}
+                        className="w-full p-4 rounded-xl bg-gray-200 border-none outline-none text-gray-700 neumorphic-inset"
+                      >
+                        <option value="">Select Month</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-3">
+                        End Month <span className="text-sm text-gray-500">(Optional - defaults to current month)</span>
+                      </label>
+                      <select
+                        value={endMonth}
+                        onChange={(e) => setEndMonth(e.target.value)}
+                        className="w-full p-4 rounded-xl bg-gray-200 border-none outline-none text-gray-700 neumorphic-inset"
+                      >
+                        <option value="">Select Month</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                      </select>
                     </div>
                   </div>
                 </div>

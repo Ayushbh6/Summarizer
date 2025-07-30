@@ -16,6 +16,7 @@ interface ScrapingResult {
   pressReleases: PressRelease[];
   totalFound: number;
   yearRange: string;
+  dateRange: string;
   pagesScrapped: number;
 }
 
@@ -34,6 +35,8 @@ function BatchResultsPageContent() {
   const baseUrl = searchParams.get('baseUrl');
   const startYear = searchParams.get('startYear');
   const endYear = searchParams.get('endYear');
+  const startMonth = searchParams.get('startMonth');
+  const endMonth = searchParams.get('endMonth');
 
   const startBaseScraping = useCallback(async () => {
     try {
@@ -48,7 +51,9 @@ function BatchResultsPageContent() {
         body: JSON.stringify({ 
           baseUrl, 
           startYear: parseInt(startYear!), 
-          endYear: parseInt(endYear!) 
+          endYear: parseInt(endYear!),
+          ...(startMonth && { startMonth: parseInt(startMonth) }),
+          ...(endMonth && { endMonth: parseInt(endMonth) })
         }),
       });
 
@@ -67,7 +72,7 @@ function BatchResultsPageContent() {
       setError(errorMessage);
       setIsLoading(false);
     }
-  }, [baseUrl, startYear, endYear]);
+  }, [baseUrl, startYear, endYear, startMonth, endMonth]);
 
   useEffect(() => {
     if (!baseUrl || !startYear || !endYear) {
@@ -219,7 +224,7 @@ function BatchResultsPageContent() {
                 Batch Press Release Processing
               </h1>
               <p className="text-gray-600 text-sm">
-                {baseUrl} • Years: {startYear}-{endYear}
+                {baseUrl} • {scrapingResult?.dateRange || `${startYear}-${endYear}`}
               </p>
             </div>
           </div>
